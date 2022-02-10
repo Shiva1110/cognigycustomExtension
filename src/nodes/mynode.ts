@@ -2,11 +2,11 @@ import {
   INodeFunctionBaseParams,
   createNodeDescriptor,
 } from '@cognigy/extension-tools';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 export interface IMyNodeParams extends INodeFunctionBaseParams {
   config: {
-    text?: string;
+    text: string;
   };
 }
 
@@ -22,7 +22,7 @@ export const myNode = createNodeDescriptor({
   defaultLabel: 'My Node',
   fields: [
     {
-      key: 'userId',
+      key: 'text',
       label: 'Enter UserId',
       type: 'cognigyText',
       description: 'User Id to fetch User details',
@@ -32,16 +32,16 @@ export const myNode = createNodeDescriptor({
     const { api } = cognigy;
     const { text } = config;
 
-    const res: User = await axios.get(
-      'https://jsonplaceholder.typicode.com/users/1'
+    const res: AxiosResponse<User> = await axios.get(
+      `https://jsonplaceholder.typicode.com/users/3`
     );
-    api.say &&
-      api.say(
-        `Hello ${res.name}
-    username: ${res.username}
-    email: ${res.email}
-    phone: ${res.phone}`,
-        null
-      );
+    api.output(text, null);
+    api.output(
+      `Hello ${res.data.name}
+      Username: ${res.data.username}
+      email: ${res.data.email}
+      phone: ${res.data.phone}`,
+      null
+    );
   },
 });
